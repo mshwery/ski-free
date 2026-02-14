@@ -69,7 +69,13 @@ hud.className = 'hud';
 
 const score = createLabelValue('Score');
 const best = createLabelValue('Best');
-hud.append(score.wrapper, best.wrapper);
+const speed = createLabelValue('Speed');
+const level = createLabelValue('Level');
+hud.append(score.wrapper, best.wrapper, speed.wrapper, level.wrapper);
+
+const bufoAlert = document.createElement('div');
+bufoAlert.className = 'bufo-alert';
+bufoAlert.textContent = 'Bufo incoming!';
 
 const gameOver = document.createElement('div');
 gameOver.className = 'game-over';
@@ -107,9 +113,10 @@ touchControls.append(touchLeftButton, touchRightButton);
 
 const help = document.createElement('p');
 help.className = 'help';
-help.textContent = 'Desktop: Arrow keys / A-D. Touch: drag on slope or use left-right buttons.';
+help.textContent =
+  'Desktop: Arrow keys / A-D. Touch: drag or buttons. At distance, a bufo starts chasing.';
 
-gameShell.append(canvas, hud, gameOver, touchControls);
+gameShell.append(canvas, hud, bufoAlert, gameOver, touchControls);
 page.append(title, subtitle, gameShell, help);
 app.appendChild(page);
 
@@ -164,9 +171,23 @@ const frame = (now: number): void => {
 
   score.value.textContent = String(state.score);
   best.value.textContent = String(state.bestScore);
+  speed.value.textContent = `${Math.round(state.speed)}`;
+  level.value.textContent = String(1 + Math.floor(state.difficulty * 9));
   writeBestScore(state.bestScore);
 
+  if (state.bufo.active && !state.gameOver) {
+    bufoAlert.classList.add('is-visible');
+    if (state.bufo.distanceBehind < 120) {
+      bufoAlert.textContent = 'Bufo right behind you!';
+    } else {
+      bufoAlert.textContent = `Bufo chasing: ${Math.max(0, Math.round(state.bufo.distanceBehind))}m`;
+    }
+  } else {
+    bufoAlert.classList.remove('is-visible');
+  }
+
   if (state.gameOver) {
+    gameOverTitle.textContent = state.gameOverReason === 'bufo' ? 'Bufo got you!' : 'You crashed!';
     gameOver.classList.add('is-visible');
   } else {
     gameOver.classList.remove('is-visible');

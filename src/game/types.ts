@@ -1,4 +1,6 @@
-export type ObstacleType = 'tree' | 'rock';
+export type ObstacleType = 'tree' | 'rock' | 'gateLeft' | 'gateRight';
+
+export type GameOverReason = 'obstacle' | 'bufo' | null;
 
 export interface Vec2 {
   x: number;
@@ -13,6 +15,13 @@ export interface Obstacle {
   size: number;
 }
 
+export interface BufoState {
+  active: boolean;
+  position: Vec2;
+  speed: number;
+  distanceBehind: number;
+}
+
 export interface GameState {
   skierPosition: Vec2;
   skierMomentum: number;
@@ -20,7 +29,11 @@ export interface GameState {
   skierCrashed: boolean;
   score: number;
   bestScore: number;
+  speed: number;
+  difficulty: number;
   elapsedMs: number;
   gameOver: boolean;
+  gameOverReason: GameOverReason;
+  bufo: BufoState;
   obstacles: Obstacle[];
 }

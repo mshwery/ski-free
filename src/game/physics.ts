@@ -6,11 +6,14 @@ export const clamp = (value: number, min: number, max: number): number =>
 export const momentumToDirection = (momentum: number): -2 | -1 | 0 | 1 | 2 =>
   clamp(Math.round(momentum), -2, 2) as -2 | -1 | 0 | 1 | 2;
 
-export const movementFromMomentum = (momentum: number): { vx: number; vy: number } => {
+export const movementFromMomentum = (
+  momentum: number,
+  forwardSpeed = BASE_FORWARD_SPEED,
+): { vx: number; vy: number } => {
   const normalized = clamp(momentum, -2, 2) / 2;
   return {
     vx: normalized * SIDE_SPEED,
-    vy: BASE_FORWARD_SPEED - Math.abs(normalized) * FORWARD_SPEED_PENALTY,
+    vy: forwardSpeed - Math.abs(normalized) * FORWARD_SPEED_PENALTY,
   };
 };
 

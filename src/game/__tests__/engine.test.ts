@@ -21,7 +21,7 @@ describe('SkiGameEngine', () => {
   });
 
   it('ends the run when an obstacle overlaps skier position', () => {
-    const engine = new SkiGameEngine({ viewportWidth: 700, seed: 5 });
+    const engine = new SkiGameEngine({ viewportWidth: 700, seed: 5, disableObstacles: true });
     const obstacle: Obstacle = {
       id: 1,
       type: 'rock',
@@ -39,7 +39,7 @@ describe('SkiGameEngine', () => {
   });
 
   it('keeps best score after restarting', () => {
-    const engine = new SkiGameEngine({ viewportWidth: 700, seed: 5 });
+    const engine = new SkiGameEngine({ viewportWidth: 700, seed: 5, disableObstacles: true });
     runFrames(engine, 80);
     const bestBeforeRestart = engine.getState().bestScore;
 
@@ -49,5 +49,35 @@ describe('SkiGameEngine', () => {
     expect(state.score).toBe(0);
     expect(state.bestScore).toBe(bestBeforeRestart);
     expect(state.gameOver).toBe(false);
+  });
+
+  it('increases base downhill speed as score rises', () => {
+    const engine = new SkiGameEngine({ viewportWidth: 700, seed: 5, disableObstacles: true });
+    runFrames(engine, 40);
+    const earlySpeed = engine.getState().speed;
+
+    runFrames(engine, 1200);
+    const lateState = engine.getState();
+    expect(lateState.speed).toBeGreaterThan(earlySpeed + 45);
+    expect(lateState.difficulty).toBeGreaterThan(0.3);
+  });
+
+  it('activates bufo chase and eventually ends run by capture', () => {
+    const engine = new SkiGameEngine({ viewportWidth: 700, seed: 4, disableObstacles: true });
+    let sawBufo = false;
+
+    for (let frame = 0; frame < 4800; frame += 1) {
+      engine.update(16, 0);
+      const state = engine.getState();
+      sawBufo = sawBufo || state.bufo.active;
+      if (state.gameOver) {
+        break;
+      }
+    }
+
+    const state = engine.getState();
+    expect(sawBufo).toBe(true);
+    expect(state.gameOver).toBe(true);
+    expect(state.gameOverReason).toBe('bufo');
   });
 });

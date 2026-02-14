@@ -71,12 +71,14 @@ body {
   top: 12px;
   left: 12px;
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   pointer-events: none;
+  max-width: min(94%, 420px);
 }
 
 .hud-item {
-  min-width: 88px;
+  min-width: 74px;
   padding: 6px 10px;
   border-radius: 10px;
   background: rgb(14 23 43 / 78%);
@@ -96,6 +98,27 @@ body {
   display: block;
   font-size: 1rem;
   font-weight: 700;
+}
+
+.bufo-alert {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  border-radius: 999px;
+  padding: 6px 14px;
+  background: rgb(16 71 33 / 85%);
+  color: #f4fff8;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  opacity: 0;
+  transition: opacity 160ms ease, transform 160ms ease;
+  pointer-events: none;
+}
+
+.bufo-alert.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 .game-over {
@@ -193,5 +216,10 @@ body {
     width: 68px;
     height: 68px;
     font-size: 1.6rem;
+  }
+
+  .bufo-alert {
+    top: 10px;
+    font-size: 0.84rem;
   }
 }
