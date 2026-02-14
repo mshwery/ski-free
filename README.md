@@ -10,6 +10,7 @@ A modern browser remake of the classic SkiFree style game, built with TypeScript
 - Dynamic progression: speed ramps up as distance grows.
 - A bufo chase phase triggers at higher distance and can end the run.
 - Slalom gates and obstacle density scale up with difficulty.
+- Hybrid sprite renderer for skier/bufo/obstacles with retro-inspired style.
 - Clean modular architecture (`engine`, `renderer`, `input`, `physics`).
 - Automated tests with Vitest.
 - CI on GitHub Actions for lint, tests, and production build.

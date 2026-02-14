@@ -1,8 +1,10 @@
 import { CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, SKIER_SCREEN_Y_RATIO } from './constants';
+import { SpriteLibrary, type SpriteId } from './sprites';
 import type { GameState, Obstacle } from './types';
 
 export class CanvasRenderer {
   private readonly context: CanvasRenderingContext2D;
+  private readonly sprites: SpriteLibrary;
   private width = CANVAS_MIN_WIDTH;
   private height = CANVAS_MIN_HEIGHT;
 
@@ -12,6 +14,7 @@ export class CanvasRenderer {
       throw new Error('2D canvas context is required');
     }
     this.context = context;
+    this.sprites = new SpriteLibrary();
   }
 
   resize(width: number, height: number): void {
@@ -24,6 +27,7 @@ export class CanvasRenderer {
     this.canvas.style.width = `${this.width}px`;
     this.canvas.style.height = `${this.height}px`;
     this.context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.context.imageSmoothingEnabled = true;
   }
 
   getViewportWidth(): number {
@@ -52,16 +56,16 @@ export class CanvasRenderer {
     for (const obstacle of sortedVisibleObstacles) {
       const sx = skierScreenX + (obstacle.position.x - state.skierPosition.x);
       const sy = skierScreenY + (obstacle.position.y - state.skierPosition.y);
-      this.drawObstacle(obstacle, sx, sy);
+      this.drawObstacleSprite(obstacle, sx, sy);
     }
 
     if (state.bufo.active) {
       const bufoX = skierScreenX + (state.bufo.position.x - state.skierPosition.x);
       const bufoY = skierScreenY + (state.bufo.position.y - state.skierPosition.y);
-      this.drawBufo(bufoX, bufoY, state.bufo.distanceBehind <= 120);
+      this.drawBufoSprite(state, bufoX, bufoY);
     }
 
-    this.drawSkier(skierScreenX, skierScreenY, state.skierDirection, state.skierCrashed);
+    this.drawSkierSprite(state, skierScreenX, skierScreenY);
   }
 
   private drawSnowTexture(cameraY: number, speed: number): void {
@@ -89,201 +93,73 @@ export class CanvasRenderer {
     }
   }
 
-  private drawObstacle(obstacle: Obstacle, x: number, y: number): void {
+  private drawObstacleSprite(obstacle: Obstacle, x: number, y: number): void {
+    const spriteId = this.getObstacleSpriteId(obstacle);
+    const scale = this.getObstacleScale(obstacle);
+    this.drawSprite(spriteId, x, y, scale);
+  }
+
+  private getObstacleSpriteId(obstacle: Obstacle): SpriteId {
+    if (obstacle.type === 'tree') {
+      const treeVariant = obstacle.id % 3;
+      return treeVariant === 0 ? 'tree_0' : treeVariant === 1 ? 'tree_1' : 'tree_2';
+    }
+
+    if (obstacle.type === 'rock') {
+      const rockVariant = obstacle.id % 3;
+      return rockVariant === 0 ? 'rock_0' : rockVariant === 1 ? 'rock_1' : 'rock_2';
+    }
+
+    return obstacle.type === 'gateLeft' ? 'gate_left' : 'gate_right';
+  }
+
+  private getObstacleScale(obstacle: Obstacle): number {
     switch (obstacle.type) {
       case 'tree':
-        this.drawTree(x, y, obstacle.size);
-        return;
+        return (obstacle.size * 2.1) / 94;
       case 'rock':
-        this.drawRock(x, y, obstacle.size);
-        return;
+        return (obstacle.size * 1.6) / 58;
       case 'gateLeft':
-        this.drawSlalomPole(x, y, obstacle.size, true);
-        return;
       case 'gateRight':
-        this.drawSlalomPole(x, y, obstacle.size, false);
-        return;
+        return (obstacle.size * 2.2) / 76;
       default:
-        return;
+        return 1;
     }
   }
 
-  private drawTree(x: number, y: number, size: number): void {
-    const trunkHeight = size * 0.25;
-    const trunkWidth = size * 0.18;
-    this.context.fillStyle = 'rgb(64 78 40 / 28%)';
-    this.context.beginPath();
-    this.context.ellipse(x + 2, y + size * 0.43, size * 0.42, size * 0.18, 0, 0, Math.PI * 2);
-    this.context.fill();
+  private drawSkierSprite(state: Readonly<GameState>, x: number, y: number): void {
+    const animationFrame = Math.floor(state.elapsedMs / 160) % 2 === 0 ? 'a' : 'b';
+    let spriteId: SpriteId;
 
-    this.context.fillStyle = '#765232';
-    this.context.fillRect(x - trunkWidth / 2, y + size * 0.13, trunkWidth, trunkHeight);
-
-    this.context.fillStyle = '#176434';
-    this.context.beginPath();
-    this.context.moveTo(x, y - size * 0.62);
-    this.context.lineTo(x - size * 0.5, y + size * 0.03);
-    this.context.lineTo(x + size * 0.5, y + size * 0.03);
-    this.context.closePath();
-    this.context.fill();
-
-    this.context.fillStyle = '#27a357';
-    this.context.beginPath();
-    this.context.moveTo(x, y - size * 0.32);
-    this.context.lineTo(x - size * 0.4, y + size * 0.33);
-    this.context.lineTo(x + size * 0.4, y + size * 0.33);
-    this.context.closePath();
-    this.context.fill();
-
-    this.context.fillStyle = 'rgb(242 249 255 / 80%)';
-    this.context.beginPath();
-    this.context.moveTo(x, y - size * 0.53);
-    this.context.lineTo(x - size * 0.2, y - size * 0.27);
-    this.context.lineTo(x + size * 0.2, y - size * 0.27);
-    this.context.closePath();
-    this.context.fill();
-  }
-
-  private drawRock(x: number, y: number, size: number): void {
-    const half = size * 0.45;
-    this.context.fillStyle = '#6e7a8d';
-    this.context.beginPath();
-    this.context.ellipse(x + 1, y + size * 0.28, size * 0.47, size * 0.16, 0, 0, Math.PI * 2);
-    this.context.fill();
-
-    this.context.fillStyle = '#7c8aa1';
-    this.context.beginPath();
-    this.context.moveTo(x - half, y + size * 0.1);
-    this.context.lineTo(x - size * 0.2, y - half);
-    this.context.lineTo(x + size * 0.28, y - size * 0.32);
-    this.context.lineTo(x + half, y + size * 0.1);
-    this.context.lineTo(x + size * 0.18, y + size * 0.36);
-    this.context.lineTo(x - size * 0.3, y + size * 0.33);
-    this.context.closePath();
-    this.context.fill();
-
-    this.context.fillStyle = '#a8afbb';
-    this.context.beginPath();
-    this.context.moveTo(x - size * 0.08, y - size * 0.2);
-    this.context.lineTo(x + size * 0.14, y - size * 0.1);
-    this.context.lineTo(x + size * 0.08, y + size * 0.06);
-    this.context.lineTo(x - size * 0.13, y - size * 0.02);
-    this.context.closePath();
-    this.context.fill();
-  }
-
-  private drawSkier(
-    x: number,
-    y: number,
-    direction: -2 | -1 | 0 | 1 | 2,
-    crashed: boolean,
-  ): void {
-    const lean = direction * 4.4;
-    const skiSpread = crashed ? 26 : 18;
-    const skiLength = 40;
-
-    this.context.strokeStyle = '#2f3848';
-    this.context.lineWidth = 4;
-    this.context.beginPath();
-    this.context.moveTo(x - skiSpread + lean - 2, y + 11);
-    this.context.lineTo(x - skiSpread + lean - direction * 5, y + 11 + skiLength);
-    this.context.moveTo(x + skiSpread + lean + 2, y + 11);
-    this.context.lineTo(x + skiSpread + lean - direction * 5, y + 11 + skiLength);
-    this.context.stroke();
-
-    this.context.strokeStyle = '#4d5767';
-    this.context.lineWidth = 2;
-    this.context.beginPath();
-    this.context.moveTo(x + lean, y + 2);
-    this.context.lineTo(x - 10 + lean - direction * 6, y + 12);
-    this.context.moveTo(x + lean, y + 2);
-    this.context.lineTo(x + 10 + lean - direction * 6, y + 12);
-    this.context.stroke();
-
-    this.context.fillStyle = crashed ? '#8c2424' : '#df3a2a';
-    this.context.fillRect(x - 9 + lean, y - 9, 18, 16);
-
-    this.context.fillStyle = '#1f5fa4';
-    this.context.fillRect(x - 8 + lean, y + 5, 16, 16);
-
-    this.context.fillStyle = '#f2dbbe';
-    this.context.beginPath();
-    this.context.arc(x + lean, y - 12, 6, 0, Math.PI * 2);
-    this.context.fill();
-
-    this.context.fillStyle = '#0f223f';
-    this.context.fillRect(x - 6 + lean, y - 19, 12, 4);
-    this.context.fillStyle = '#4ba3d4';
-    this.context.fillRect(x - 5 + lean, y - 14, 10, 3);
-  }
-
-  private drawSlalomPole(x: number, y: number, size: number, isLeft: boolean): void {
-    const poleHeight = size;
-    this.context.fillStyle = '#f8faff';
-    this.context.fillRect(x - 2, y - poleHeight, 4, poleHeight);
-
-    this.context.fillStyle = isLeft ? '#db3045' : '#1e6fd8';
-    this.context.fillRect(x - 3.5, y - poleHeight, 7, 8);
-    this.context.fillRect(x - 3.5, y - poleHeight + 12, 7, 8);
-
-    this.context.fillStyle = 'rgb(42 54 75 / 35%)';
-    this.context.beginPath();
-    this.context.ellipse(x + 2, y + 5, 7, 3, 0, 0, Math.PI * 2);
-    this.context.fill();
-
-    this.context.fillStyle = isLeft ? '#ef476f' : '#3a86ff';
-    this.context.beginPath();
-    if (isLeft) {
-      this.context.moveTo(x + 2, y - poleHeight + 5);
-      this.context.lineTo(x + 24, y - poleHeight + 8);
-      this.context.lineTo(x + 2, y - poleHeight + 14);
+    if (state.skierCrashed) {
+      spriteId = 'skier_crash';
+    } else if (state.skierDirection < 0) {
+      spriteId = animationFrame === 'a' ? 'skier_left_a' : 'skier_left_b';
+    } else if (state.skierDirection > 0) {
+      spriteId = animationFrame === 'a' ? 'skier_right_a' : 'skier_right_b';
     } else {
-      this.context.moveTo(x - 2, y - poleHeight + 5);
-      this.context.lineTo(x - 24, y - poleHeight + 8);
-      this.context.lineTo(x - 2, y - poleHeight + 14);
+      spriteId = animationFrame === 'a' ? 'skier_center_a' : 'skier_center_b';
     }
-    this.context.closePath();
-    this.context.fill();
+
+    this.drawSprite(spriteId, x, y, 1);
   }
 
-  private drawBufo(x: number, y: number, closeBehind: boolean): void {
-    const size = closeBehind ? 1.05 : 0.96;
-    this.context.fillStyle = 'rgb(40 55 32 / 24%)';
-    this.context.beginPath();
-    this.context.ellipse(x, y + 22 * size, 26 * size, 8 * size, 0, 0, Math.PI * 2);
-    this.context.fill();
+  private drawBufoSprite(state: Readonly<GameState>, x: number, y: number): void {
+    const spriteId: SpriteId = Math.floor(state.elapsedMs / 180) % 2 === 0 ? 'bufo_a' : 'bufo_b';
+    const baseScale = state.bufo.distanceBehind <= 120 ? 1.1 : 0.96;
+    this.drawSprite(spriteId, x, y, baseScale);
+  }
 
-    this.context.fillStyle = '#5a9d37';
-    this.context.beginPath();
-    this.context.ellipse(x, y + 7 * size, 25 * size, 20 * size, 0, 0, Math.PI * 2);
-    this.context.fill();
-
-    this.context.fillStyle = '#76bd4d';
-    this.context.beginPath();
-    this.context.ellipse(x, y + 3 * size, 17 * size, 11 * size, 0, 0, Math.PI * 2);
-    this.context.fill();
-
-    this.context.fillStyle = '#5a9d37';
-    this.context.beginPath();
-    this.context.arc(x - 11 * size, y - 8 * size, 7 * size, 0, Math.PI * 2);
-    this.context.arc(x + 11 * size, y - 8 * size, 7 * size, 0, Math.PI * 2);
-    this.context.fill();
-
-    this.context.fillStyle = '#f9fdf4';
-    this.context.beginPath();
-    this.context.arc(x - 11 * size, y - 8 * size, 3.5 * size, 0, Math.PI * 2);
-    this.context.arc(x + 11 * size, y - 8 * size, 3.5 * size, 0, Math.PI * 2);
-    this.context.fill();
-
-    this.context.fillStyle = '#152410';
-    this.context.beginPath();
-    this.context.arc(x - 11 * size, y - 8 * size, 1.8 * size, 0, Math.PI * 2);
-    this.context.arc(x + 11 * size, y - 8 * size, 1.8 * size, 0, Math.PI * 2);
-    this.context.fill();
-
-    this.context.fillStyle = '#f17f92';
-    this.context.beginPath();
-    this.context.ellipse(x, y + 10 * size, 10 * size, 4 * size, 0, 0, Math.PI);
-    this.context.fill();
+  private drawSprite(spriteId: SpriteId, x: number, y: number, scale: number): void {
+    const sprite = this.sprites.get(spriteId);
+    const width = sprite.canvas.width * scale;
+    const height = sprite.canvas.height * scale;
+    this.context.drawImage(
+      sprite.canvas,
+      x - sprite.anchorX * scale,
+      y - sprite.anchorY * scale,
+      width,
+      height,
+    );
   }
 }
