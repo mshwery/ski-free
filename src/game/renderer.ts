@@ -147,14 +147,7 @@ export class CanvasRenderer {
   }
 
   private drawBufoSprite(state: Readonly<GameState>, x: number, y: number): void {
-    const frameMs =
-      state.bufo.phase === 'lunge' ? 96 : state.bufo.phase === 'surge' ? 126 : 176;
-    const spriteId: SpriteId =
-      state.bufo.phase === 'lunge'
-        ? 'bufo_b'
-        : Math.floor(state.elapsedMs / frameMs) % 2 === 0
-          ? 'bufo_a'
-          : 'bufo_b';
+    const spriteId: SpriteId = state.bufo.phase === 'stalk' ? 'bufo_a' : 'bufo_b';
     const phaseScale =
       state.bufo.phase === 'lunge' ? 1.24 : state.bufo.phase === 'surge' ? 1.08 : 0.96;
     const bob = Math.sin(state.elapsedMs * 0.015) * (state.bufo.phase === 'lunge' ? 3.5 : 2);
