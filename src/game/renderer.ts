@@ -27,7 +27,7 @@ export class CanvasRenderer {
     this.canvas.style.width = `${this.width}px`;
     this.canvas.style.height = `${this.height}px`;
     this.context.setTransform(dpr, 0, 0, dpr, 0, 0);
-    this.context.imageSmoothingEnabled = true;
+    this.context.imageSmoothingEnabled = false;
   }
 
   getViewportWidth(): number {

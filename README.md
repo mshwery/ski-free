@@ -8,6 +8,7 @@ A modern browser remake of the classic SkiFree style game, built with TypeScript
 - Smooth touch controls for mobile web (drag-to-steer + on-screen left/right buttons).
 - Keyboard support for desktop (`ArrowLeft`/`ArrowRight` or `A`/`D`).
 - Dynamic progression: speed ramps up as distance grows.
+- Tuned steering and speed curve for a more classic SkiFree feel.
 - A bufo chase phase triggers at higher distance and can end the run.
 - Slalom gates and obstacle density scale up with difficulty.
 - Hybrid sprite renderer for skier/bufo/obstacles with retro-inspired style.

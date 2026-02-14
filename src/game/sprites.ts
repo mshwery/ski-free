@@ -44,106 +44,98 @@ const createSprite = (
 };
 
 const createSkierSprite = (direction: -1 | 0 | 1, frame: 0 | 1): Sprite =>
-  createSprite(86, 92, 43, 71, (ctx) => {
-    const lean = direction * 7.5;
-    const stride = frame === 0 ? -2.2 : 2.2;
-    const torsoY = 26;
+  createSprite(72, 84, 36, 68, (ctx) => {
+    const pixel = 3;
+    const stride = frame === 0 ? -1 : 1;
+    const lean = direction * 2;
+    const bodyX = 8 + lean;
 
-    ctx.fillStyle = 'rgb(30 43 62 / 26%)';
-    ctx.beginPath();
-    ctx.ellipse(43, 76, 22, 7, 0, 0, Math.PI * 2);
-    ctx.fill();
+    const put = (x: number, y: number, width: number, height: number, color: string): void => {
+      ctx.fillStyle = color;
+      ctx.fillRect(x * pixel, y * pixel, width * pixel, height * pixel);
+    };
 
-    ctx.strokeStyle = '#313d54';
-    ctx.lineWidth = 4.2;
-    ctx.beginPath();
-    ctx.moveTo(22 + lean, 47);
-    ctx.lineTo(17 + lean - direction * 6, 84);
-    ctx.moveTo(63 + lean, 47);
-    ctx.lineTo(68 + lean - direction * 6, 84);
-    ctx.stroke();
+    const line = (x0: number, y0: number, x1: number, y1: number, color: string): void => {
+      const steps = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0));
+      for (let index = 0; index <= steps; index += 1) {
+        const x = Math.round(x0 + ((x1 - x0) * index) / Math.max(steps, 1));
+        const y = Math.round(y0 + ((y1 - y0) * index) / Math.max(steps, 1));
+        put(x, y, 1, 1, color);
+      }
+    };
 
-    ctx.strokeStyle = '#545f74';
-    ctx.lineWidth = 2.2;
-    ctx.beginPath();
-    ctx.moveTo(43 + lean - 7, 52);
-    ctx.lineTo(41 + lean - 8, 58 + stride);
-    ctx.moveTo(43 + lean + 7, 52);
-    ctx.lineTo(45 + lean + 8, 58 - stride);
-    ctx.stroke();
+    put(7, 25, 10, 1, 'rgb(29 43 62 / 32%)');
+    put(8, 26, 8, 1, 'rgb(29 43 62 / 22%)');
 
-    ctx.fillStyle = '#e13f2f';
-    ctx.fillRect(33 + lean, torsoY, 20, 19);
-    ctx.fillStyle = '#f06b4d';
-    ctx.fillRect(35 + lean, torsoY + 2, 7, 7);
+    line(bodyX - 3, 18, bodyX - 4 - direction, 27, '#2a3448');
+    line(bodyX + 10, 18, bodyX + 11 - direction, 27, '#2a3448');
+    line(bodyX - 2, 19, bodyX - 3 - direction, 27, '#4f5d76');
+    line(bodyX + 9, 19, bodyX + 10 - direction, 27, '#4f5d76');
+    put(bodyX - 5 - direction, 27, 3, 1, '#2a3448');
+    put(bodyX + 10 - direction, 27, 3, 1, '#2a3448');
 
-    ctx.fillStyle = '#1f63ad';
-    ctx.fillRect(31 + lean, torsoY + 18, 24, 19);
-    ctx.fillStyle = '#2f7fd3';
-    ctx.fillRect(35 + lean, torsoY + 22, 7, 8);
+    put(bodyX + 1, 16, 2, 2, '#59657d');
+    put(bodyX + 5, 16, 2, 2, '#59657d');
+    put(bodyX, 12, 8, 5, '#1f64b1');
+    put(bodyX + 1, 13, 2, 2, '#2f80d6');
+    put(bodyX + 5, 13, 2, 2, '#2f80d6');
 
-    ctx.strokeStyle = '#4f5d74';
-    ctx.lineWidth = 2.4;
-    ctx.beginPath();
-    ctx.moveTo(42 + lean, torsoY + 7);
-    ctx.lineTo(31 + lean - direction * 5, torsoY + 19 + stride);
-    ctx.moveTo(44 + lean, torsoY + 8);
-    ctx.lineTo(55 + lean - direction * 5, torsoY + 19 - stride);
-    ctx.stroke();
+    put(bodyX, 7, 8, 5, '#d33f32');
+    put(bodyX + 1, 8, 3, 2, '#ef7150');
+    if (frame === 0) {
+      put(bodyX - 1 + Math.max(direction, 0), 8, 2, 1, '#e9584a');
+    } else {
+      put(bodyX - 2 + Math.max(direction, 0), 8, 3, 1, '#e9584a');
+    }
 
-    ctx.fillStyle = '#f5debf';
-    ctx.beginPath();
-    ctx.arc(43 + lean, 21, 6.6, 0, Math.PI * 2);
-    ctx.fill();
+    line(bodyX + 1, 9, bodyX - 3 - direction, 14 + stride, '#343d52');
+    line(bodyX + 7, 9, bodyX + 11 - direction, 14 - stride, '#343d52');
+    line(bodyX - 3 - direction, 14 + stride, bodyX - 5 - direction, 20 + stride, '#343d52');
+    line(bodyX + 11 - direction, 14 - stride, bodyX + 13 - direction, 20 - stride, '#343d52');
 
-    ctx.fillStyle = '#121f39';
-    ctx.fillRect(36 + lean, 12, 14, 4.4);
-    ctx.fillStyle = '#55b8ea';
-    ctx.fillRect(37 + lean, 16, 12, 3.6);
-
-    ctx.fillStyle = '#e65245';
-    ctx.beginPath();
-    ctx.moveTo(36 + lean, 26);
-    ctx.lineTo(30 + lean + direction * 3, 29);
-    ctx.lineTo(25 + lean + direction * 7, 31 + stride * 0.4);
-    ctx.lineTo(30 + lean + direction * 6, 34 + stride * 0.4);
-    ctx.closePath();
-    ctx.fill();
+    put(bodyX + 2, 3, 4, 3, '#f3dbbc');
+    put(bodyX + 1, 1, 6, 2, '#111f39');
+    put(bodyX + 2, 2, 4, 1, '#62c2ec');
   });
 
 const createSkierCrashSprite = (): Sprite =>
-  createSprite(90, 92, 45, 71, (ctx) => {
-    ctx.fillStyle = 'rgb(30 43 62 / 26%)';
-    ctx.beginPath();
-    ctx.ellipse(45, 77, 24, 8, 0, 0, Math.PI * 2);
-    ctx.fill();
+  createSprite(78, 84, 39, 68, (ctx) => {
+    const pixel = 3;
 
-    ctx.strokeStyle = '#313d54';
-    ctx.lineWidth = 4.4;
-    ctx.beginPath();
-    ctx.moveTo(16, 52);
-    ctx.lineTo(8, 86);
-    ctx.moveTo(74, 50);
-    ctx.lineTo(83, 86);
-    ctx.stroke();
+    const put = (x: number, y: number, width: number, height: number, color: string): void => {
+      ctx.fillStyle = color;
+      ctx.fillRect(x * pixel, y * pixel, width * pixel, height * pixel);
+    };
 
-    ctx.fillStyle = '#932f2f';
-    ctx.fillRect(34, 28, 22, 17);
-    ctx.fillStyle = '#1f63ad';
-    ctx.fillRect(31, 44, 25, 18);
-    ctx.fillStyle = '#f5debf';
-    ctx.beginPath();
-    ctx.arc(49, 24, 6.7, 0, Math.PI * 2);
-    ctx.fill();
+    const line = (x0: number, y0: number, x1: number, y1: number, color: string): void => {
+      const steps = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0));
+      for (let index = 0; index <= steps; index += 1) {
+        const x = Math.round(x0 + ((x1 - x0) * index) / Math.max(steps, 1));
+        const y = Math.round(y0 + ((y1 - y0) * index) / Math.max(steps, 1));
+        put(x, y, 1, 1, color);
+      }
+    };
 
-    ctx.fillStyle = '#121f39';
-    ctx.fillRect(42, 15, 14, 4.4);
-    ctx.fillStyle = '#55b8ea';
-    ctx.fillRect(43, 19, 12, 3.6);
+    put(7, 25, 12, 1, 'rgb(29 43 62 / 32%)');
+    put(8, 26, 10, 1, 'rgb(29 43 62 / 22%)');
 
-    ctx.fillStyle = '#5a6579';
-    ctx.fillRect(36, 55, 4, 9);
-    ctx.fillRect(48, 56, 4, 9);
+    line(5, 18, 19, 27, '#2a3448');
+    line(20, 18, 7, 27, '#2a3448');
+    put(4, 27, 4, 1, '#2a3448');
+    put(18, 27, 4, 1, '#2a3448');
+
+    line(4, 10, 2, 17, '#343d52');
+    line(21, 9, 24, 16, '#343d52');
+    put(2, 17, 2, 1, '#343d52');
+    put(23, 16, 2, 1, '#343d52');
+
+    put(10, 11, 8, 5, '#8f3030');
+    put(9, 15, 10, 4, '#1f64b1');
+    put(11, 16, 3, 2, '#2f80d6');
+
+    put(13, 8, 4, 3, '#f3dbbc');
+    put(12, 6, 6, 2, '#111f39');
+    put(13, 7, 4, 1, '#62c2ec');
   });
 
 const createTreeSprite = (variant: 0 | 1 | 2): Sprite =>

@@ -22,6 +22,7 @@ export interface BufoState {
   position: Vec2;
   speed: number;
   distanceBehind: number;
+  chaseElapsedMs: number;
 }
 
 export interface GameState {

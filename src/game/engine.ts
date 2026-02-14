@@ -8,8 +8,10 @@ import {
   BUFO_LUNGE_OFFSET,
   BUFO_LUNGE_TRACK_RATE,
   BUFO_LUNGE_TRIGGER_DISTANCE,
+  BUFO_STALK_DURATION_MS,
   BUFO_STALK_OFFSET_MAX,
   BUFO_STALK_OFFSET_MIN,
+  BUFO_SURGE_DURATION_MS,
   BUFO_SURGE_OFFSET,
   BUFO_SURGE_TRIGGER_DISTANCE,
   BUFO_WEAVE_AMPLITUDE,
@@ -75,6 +77,7 @@ export class SkiGameEngine {
         position: { x: 0, y: -BUFO_BASE_DISTANCE },
         speed: BASE_FORWARD_SPEED + BUFO_STALK_OFFSET_MIN,
         distanceBehind: BUFO_BASE_DISTANCE,
+        chaseElapsedMs: 0,
       },
       obstacles: [],
     };
@@ -162,6 +165,7 @@ export class SkiGameEngine {
         y: this.state.skierPosition.y - BUFO_BASE_DISTANCE,
       };
       this.state.bufo.distanceBehind = BUFO_BASE_DISTANCE;
+      this.state.bufo.chaseElapsedMs = 0;
     }
 
     if (!this.state.bufo.active) {
@@ -170,12 +174,21 @@ export class SkiGameEngine {
       this.state.bufo.position.y = this.state.skierPosition.y - BUFO_BASE_DISTANCE;
       this.state.bufo.distanceBehind = BUFO_BASE_DISTANCE;
       this.state.bufo.speed = this.state.speed + BUFO_STALK_OFFSET_MIN;
+      this.state.bufo.chaseElapsedMs = 0;
       return;
     }
 
-    if (this.state.bufo.distanceBehind <= BUFO_LUNGE_TRIGGER_DISTANCE) {
+    this.state.bufo.chaseElapsedMs += dt * 1000;
+    const inStalkWindow = this.state.bufo.chaseElapsedMs < BUFO_STALK_DURATION_MS;
+    const inSurgeWindow =
+      this.state.bufo.chaseElapsedMs < BUFO_STALK_DURATION_MS + BUFO_SURGE_DURATION_MS;
+
+    if (
+      this.state.bufo.distanceBehind <= BUFO_LUNGE_TRIGGER_DISTANCE ||
+      !inSurgeWindow
+    ) {
       this.state.bufo.phase = 'lunge';
-    } else if (this.state.bufo.distanceBehind <= BUFO_SURGE_TRIGGER_DISTANCE) {
+    } else if (this.state.bufo.distanceBehind <= BUFO_SURGE_TRIGGER_DISTANCE || !inStalkWindow) {
       this.state.bufo.phase = 'surge';
     } else {
       this.state.bufo.phase = 'stalk';
