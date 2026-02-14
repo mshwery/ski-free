@@ -248,11 +248,47 @@ const createBufoSprite = (frame: 0 | 1): Sprite =>
   createSprite(108, 96, 54, 77, (ctx) => {
     const tongueOffset = frame === 0 ? -2 : 2;
     const pupilOffset = frame === 0 ? -0.6 : 0.6;
+    const armsUp = frame === 1;
 
     ctx.fillStyle = 'rgb(30 43 28 / 26%)';
     ctx.beginPath();
     ctx.ellipse(55, 81, 30, 9, 0, 0, Math.PI * 2);
     ctx.fill();
+
+    ctx.fillStyle = '#4d8337';
+    if (armsUp) {
+      ctx.beginPath();
+      ctx.moveTo(38, 52);
+      ctx.lineTo(24, 27);
+      ctx.lineTo(31, 23);
+      ctx.lineTo(44, 48);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(70, 52);
+      ctx.lineTo(84, 27);
+      ctx.lineTo(77, 23);
+      ctx.lineTo(64, 48);
+      ctx.closePath();
+      ctx.fill();
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(34, 56);
+      ctx.lineTo(12, 58);
+      ctx.lineTo(14, 66);
+      ctx.lineTo(36, 63);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(74, 56);
+      ctx.lineTo(96, 58);
+      ctx.lineTo(94, 66);
+      ctx.lineTo(72, 63);
+      ctx.closePath();
+      ctx.fill();
+    }
 
     ctx.fillStyle = '#578f3f';
     ctx.beginPath();
@@ -286,6 +322,19 @@ const createBufoSprite = (frame: 0 | 1): Sprite =>
     ctx.beginPath();
     ctx.ellipse(54 + tongueOffset, 58, 11, 4, 0, 0, Math.PI);
     ctx.fill();
+
+    ctx.fillStyle = '#f7fff0';
+    if (armsUp) {
+      ctx.fillRect(24, 24, 2, 3);
+      ctx.fillRect(27, 22, 2, 3);
+      ctx.fillRect(82, 24, 2, 3);
+      ctx.fillRect(79, 22, 2, 3);
+    } else {
+      ctx.fillRect(12, 59, 2, 3);
+      ctx.fillRect(15, 58, 2, 3);
+      ctx.fillRect(94, 59, 2, 3);
+      ctx.fillRect(91, 58, 2, 3);
+    }
   });
 
 export class SpriteLibrary {
