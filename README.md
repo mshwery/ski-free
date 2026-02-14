@@ -7,6 +7,9 @@ A modern browser remake of the classic SkiFree style game, built with TypeScript
 - Retro-inspired visuals and downhill gameplay similar to the original.
 - Smooth touch controls for mobile web (drag-to-steer + on-screen left/right buttons).
 - Keyboard support for desktop (`ArrowLeft`/`ArrowRight` or `A`/`D`).
+- Dynamic progression: speed ramps up as distance grows.
+- A bufo chase phase triggers at higher distance and can end the run.
+- Slalom gates and obstacle density scale up with difficulty.
 - Clean modular architecture (`engine`, `renderer`, `input`, `physics`).
 - Automated tests with Vitest.
 - CI on GitHub Actions for lint, tests, and production build.
@@ -72,3 +75,4 @@ src/
 - Best score is persisted with `localStorage`.
 - Input uses Pointer Events for touch + mouse support.
 - Rendering is done with Canvas 2D and scales for high-DPI screens.
+- Runs now end from either obstacle collisions or bufo capture.
