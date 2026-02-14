@@ -44,79 +44,106 @@ const createSprite = (
 };
 
 const createSkierSprite = (direction: -1 | 0 | 1, frame: 0 | 1): Sprite =>
-  createSprite(72, 74, 36, 56, (ctx) => {
-    const lean = direction * 6;
-    const armOffset = frame === 0 ? -1 : 2;
+  createSprite(86, 92, 43, 71, (ctx) => {
+    const lean = direction * 7.5;
+    const stride = frame === 0 ? -2.2 : 2.2;
+    const torsoY = 26;
 
-    ctx.fillStyle = 'rgb(31 41 55 / 25%)';
+    ctx.fillStyle = 'rgb(30 43 62 / 26%)';
     ctx.beginPath();
-    ctx.ellipse(36, 62, 19, 6, 0, 0, Math.PI * 2);
+    ctx.ellipse(43, 76, 22, 7, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.strokeStyle = '#2d3647';
-    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#313d54';
+    ctx.lineWidth = 4.2;
     ctx.beginPath();
-    ctx.moveTo(18 + lean, 40);
-    ctx.lineTo(15 + lean - direction * 5, 68);
-    ctx.moveTo(54 + lean, 40);
-    ctx.lineTo(57 + lean - direction * 5, 68);
+    ctx.moveTo(22 + lean, 47);
+    ctx.lineTo(17 + lean - direction * 6, 84);
+    ctx.moveTo(63 + lean, 47);
+    ctx.lineTo(68 + lean - direction * 6, 84);
     ctx.stroke();
 
-    ctx.strokeStyle = '#5a6475';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#545f74';
+    ctx.lineWidth = 2.2;
     ctx.beginPath();
-    ctx.moveTo(36 + lean, 28);
-    ctx.lineTo(26 + lean - direction * 5, 42 + armOffset);
-    ctx.moveTo(36 + lean, 28);
-    ctx.lineTo(46 + lean - direction * 5, 42 - armOffset);
+    ctx.moveTo(43 + lean - 7, 52);
+    ctx.lineTo(41 + lean - 8, 58 + stride);
+    ctx.moveTo(43 + lean + 7, 52);
+    ctx.lineTo(45 + lean + 8, 58 - stride);
     ctx.stroke();
 
-    ctx.fillStyle = '#d53a2d';
-    ctx.fillRect(27 + lean, 16, 18, 16);
-    ctx.fillStyle = '#195fa8';
-    ctx.fillRect(26 + lean, 31, 20, 17);
+    ctx.fillStyle = '#e13f2f';
+    ctx.fillRect(33 + lean, torsoY, 20, 19);
+    ctx.fillStyle = '#f06b4d';
+    ctx.fillRect(35 + lean, torsoY + 2, 7, 7);
 
-    ctx.fillStyle = '#f3dcc0';
+    ctx.fillStyle = '#1f63ad';
+    ctx.fillRect(31 + lean, torsoY + 18, 24, 19);
+    ctx.fillStyle = '#2f7fd3';
+    ctx.fillRect(35 + lean, torsoY + 22, 7, 8);
+
+    ctx.strokeStyle = '#4f5d74';
+    ctx.lineWidth = 2.4;
     ctx.beginPath();
-    ctx.arc(36 + lean, 12, 6, 0, Math.PI * 2);
+    ctx.moveTo(42 + lean, torsoY + 7);
+    ctx.lineTo(31 + lean - direction * 5, torsoY + 19 + stride);
+    ctx.moveTo(44 + lean, torsoY + 8);
+    ctx.lineTo(55 + lean - direction * 5, torsoY + 19 - stride);
+    ctx.stroke();
+
+    ctx.fillStyle = '#f5debf';
+    ctx.beginPath();
+    ctx.arc(43 + lean, 21, 6.6, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = '#12213d';
-    ctx.fillRect(30 + lean, 5, 12, 4);
-    ctx.fillStyle = '#4ea9db';
-    ctx.fillRect(31 + lean, 9, 10, 3);
+    ctx.fillStyle = '#121f39';
+    ctx.fillRect(36 + lean, 12, 14, 4.4);
+    ctx.fillStyle = '#55b8ea';
+    ctx.fillRect(37 + lean, 16, 12, 3.6);
+
+    ctx.fillStyle = '#e65245';
+    ctx.beginPath();
+    ctx.moveTo(36 + lean, 26);
+    ctx.lineTo(30 + lean + direction * 3, 29);
+    ctx.lineTo(25 + lean + direction * 7, 31 + stride * 0.4);
+    ctx.lineTo(30 + lean + direction * 6, 34 + stride * 0.4);
+    ctx.closePath();
+    ctx.fill();
   });
 
 const createSkierCrashSprite = (): Sprite =>
-  createSprite(78, 74, 39, 56, (ctx) => {
-    ctx.fillStyle = 'rgb(31 41 55 / 25%)';
+  createSprite(90, 92, 45, 71, (ctx) => {
+    ctx.fillStyle = 'rgb(30 43 62 / 26%)';
     ctx.beginPath();
-    ctx.ellipse(39, 62, 21, 7, 0, 0, Math.PI * 2);
+    ctx.ellipse(45, 77, 24, 8, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.strokeStyle = '#2d3647';
-    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#313d54';
+    ctx.lineWidth = 4.4;
     ctx.beginPath();
-    ctx.moveTo(14, 42);
-    ctx.lineTo(6, 69);
-    ctx.moveTo(64, 41);
-    ctx.lineTo(72, 69);
+    ctx.moveTo(16, 52);
+    ctx.lineTo(8, 86);
+    ctx.moveTo(74, 50);
+    ctx.lineTo(83, 86);
     ctx.stroke();
 
-    ctx.fillStyle = '#8f2a2a';
-    ctx.fillRect(30, 19, 20, 15);
-    ctx.fillStyle = '#195fa8';
-    ctx.fillRect(28, 33, 22, 15);
-
-    ctx.fillStyle = '#f3dcc0';
+    ctx.fillStyle = '#932f2f';
+    ctx.fillRect(34, 28, 22, 17);
+    ctx.fillStyle = '#1f63ad';
+    ctx.fillRect(31, 44, 25, 18);
+    ctx.fillStyle = '#f5debf';
     ctx.beginPath();
-    ctx.arc(41, 14, 6, 0, Math.PI * 2);
+    ctx.arc(49, 24, 6.7, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = '#12213d';
-    ctx.fillRect(35, 7, 12, 4);
-    ctx.fillStyle = '#4ea9db';
-    ctx.fillRect(36, 11, 10, 3);
+    ctx.fillStyle = '#121f39';
+    ctx.fillRect(42, 15, 14, 4.4);
+    ctx.fillStyle = '#55b8ea';
+    ctx.fillRect(43, 19, 12, 3.6);
+
+    ctx.fillStyle = '#5a6579';
+    ctx.fillRect(36, 55, 4, 9);
+    ctx.fillRect(48, 56, 4, 9);
   });
 
 const createTreeSprite = (variant: 0 | 1 | 2): Sprite =>

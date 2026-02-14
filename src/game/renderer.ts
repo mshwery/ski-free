@@ -128,7 +128,9 @@ export class CanvasRenderer {
   }
 
   private drawSkierSprite(state: Readonly<GameState>, x: number, y: number): void {
-    const animationFrame = Math.floor(state.elapsedMs / 160) % 2 === 0 ? 'a' : 'b';
+    const cadenceMs = Math.max(92, 196 - state.speed * 0.18);
+    const animationFrame = Math.floor(state.elapsedMs / cadenceMs) % 2 === 0 ? 'a' : 'b';
+    const bob = state.skierCrashed ? 0 : Math.sin(state.elapsedMs * 0.02) * 0.8;
     let spriteId: SpriteId;
 
     if (state.skierCrashed) {
@@ -141,13 +143,17 @@ export class CanvasRenderer {
       spriteId = animationFrame === 'a' ? 'skier_center_a' : 'skier_center_b';
     }
 
-    this.drawSprite(spriteId, x, y, 1);
+    this.drawSprite(spriteId, x, y + bob, 1.04);
   }
 
   private drawBufoSprite(state: Readonly<GameState>, x: number, y: number): void {
-    const spriteId: SpriteId = Math.floor(state.elapsedMs / 180) % 2 === 0 ? 'bufo_a' : 'bufo_b';
-    const baseScale = state.bufo.distanceBehind <= 120 ? 1.1 : 0.96;
-    this.drawSprite(spriteId, x, y, baseScale);
+    const frameMs =
+      state.bufo.phase === 'lunge' ? 96 : state.bufo.phase === 'surge' ? 126 : 176;
+    const spriteId: SpriteId = Math.floor(state.elapsedMs / frameMs) % 2 === 0 ? 'bufo_a' : 'bufo_b';
+    const phaseScale =
+      state.bufo.phase === 'lunge' ? 1.24 : state.bufo.phase === 'surge' ? 1.08 : 0.96;
+    const bob = Math.sin(state.elapsedMs * 0.015) * (state.bufo.phase === 'lunge' ? 3.5 : 2);
+    this.drawSprite(spriteId, x, y + bob, phaseScale);
   }
 
   private drawSprite(spriteId: SpriteId, x: number, y: number, scale: number): void {

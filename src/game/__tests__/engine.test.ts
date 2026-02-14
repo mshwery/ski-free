@@ -58,25 +58,29 @@ describe('SkiGameEngine', () => {
 
     runFrames(engine, 1200);
     const lateState = engine.getState();
-    expect(lateState.speed).toBeGreaterThan(earlySpeed + 25);
+    expect(lateState.speed).toBeGreaterThan(earlySpeed + 38);
     expect(lateState.difficulty).toBeGreaterThan(0.3);
   });
 
   it('activates bufo chase and eventually ends run by capture', () => {
     const engine = new SkiGameEngine({ viewportWidth: 700, seed: 4, disableObstacles: true });
-    let sawBufo = false;
+    const phasesSeen = new Set<string>();
 
     for (let frame = 0; frame < 4800; frame += 1) {
       engine.update(16, 0);
       const state = engine.getState();
-      sawBufo = sawBufo || state.bufo.active;
+      if (state.bufo.active) {
+        phasesSeen.add(state.bufo.phase);
+      }
       if (state.gameOver) {
         break;
       }
     }
 
     const state = engine.getState();
-    expect(sawBufo).toBe(true);
+    expect(phasesSeen.has('stalk')).toBe(true);
+    expect(phasesSeen.has('surge')).toBe(true);
+    expect(phasesSeen.has('lunge')).toBe(true);
     expect(state.gameOver).toBe(true);
     expect(state.gameOverReason).toBe('bufo');
   });

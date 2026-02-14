@@ -54,7 +54,7 @@ export class InputController {
       return;
     }
 
-    this.dragAxis = clamp((event.clientX - this.dragStartX) / 85, -1, 1);
+    this.dragAxis = clamp((event.clientX - this.dragStartX) / 70, -1, 1);
   };
 
   private readonly onDragPointerUp = (event: PointerEvent): void => {
@@ -116,7 +116,7 @@ export class InputController {
       return touchAxis;
     }
 
-    if (Math.abs(this.dragAxis) > 0.06) {
+    if (Math.abs(this.dragAxis) > 0.025) {
       return this.dragAxis;
     }
 

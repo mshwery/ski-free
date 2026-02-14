@@ -114,7 +114,7 @@ touchControls.append(touchLeftButton, touchRightButton);
 const help = document.createElement('p');
 help.className = 'help';
 help.textContent =
-  'Desktop: Arrow keys / A-D. Touch: drag or buttons. At distance, a bufo starts chasing.';
+  'Desktop: Arrow keys / A-D. Touch: drag or buttons. At distance, bufo stalks then lunges.';
 
 gameShell.append(canvas, hud, bufoAlert, gameOver, touchControls);
 page.append(title, subtitle, gameShell, help);
@@ -177,10 +177,12 @@ const frame = (now: number): void => {
 
   if (state.bufo.active && !state.gameOver) {
     bufoAlert.classList.add('is-visible');
-    if (state.bufo.distanceBehind < 120) {
-      bufoAlert.textContent = 'Bufo right behind you!';
+    if (state.bufo.phase === 'lunge') {
+      bufoAlert.textContent = 'Bufo lunging!';
+    } else if (state.bufo.phase === 'surge') {
+      bufoAlert.textContent = `Bufo charging: ${Math.max(0, Math.round(state.bufo.distanceBehind))}m`;
     } else {
-      bufoAlert.textContent = `Bufo chasing: ${Math.max(0, Math.round(state.bufo.distanceBehind))}m`;
+      bufoAlert.textContent = `Bufo stalking: ${Math.max(0, Math.round(state.bufo.distanceBehind))}m`;
     }
   } else {
     bufoAlert.classList.remove('is-visible');

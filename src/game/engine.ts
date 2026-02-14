@@ -4,9 +4,16 @@ import {
   BUFO_BASE_DISTANCE,
   BUFO_CATCH_DISTANCE,
   BUFO_CATCH_X_RANGE,
-  BUFO_SPEED_OFFSET_END,
-  BUFO_SPEED_OFFSET_START,
-  BUFO_TRACKING_RATE,
+  BUFO_HORIZONTAL_TRACK_RATE,
+  BUFO_LUNGE_OFFSET,
+  BUFO_LUNGE_TRACK_RATE,
+  BUFO_LUNGE_TRIGGER_DISTANCE,
+  BUFO_STALK_OFFSET_MAX,
+  BUFO_STALK_OFFSET_MIN,
+  BUFO_SURGE_OFFSET,
+  BUFO_SURGE_TRIGGER_DISTANCE,
+  BUFO_WEAVE_AMPLITUDE,
+  BUFO_WEAVE_FREQUENCY,
   DESPAWN_BEHIND_DISTANCE,
   DIFFICULTY_RAMP_DISTANCE,
   MAX_SPEED_BOOST,
@@ -64,8 +71,9 @@ export class SkiGameEngine {
       gameOverReason: null,
       bufo: {
         active: false,
+        phase: 'waiting',
         position: { x: 0, y: -BUFO_BASE_DISTANCE },
-        speed: BASE_FORWARD_SPEED + BUFO_SPEED_OFFSET_START,
+        speed: BASE_FORWARD_SPEED + BUFO_STALK_OFFSET_MIN,
         distanceBehind: BUFO_BASE_DISTANCE,
       },
       obstacles: [],
@@ -148,6 +156,7 @@ export class SkiGameEngine {
   private updateBufo(dt: number): void {
     if (!this.state.bufo.active && this.state.score >= BUFO_ACTIVATION_SCORE) {
       this.state.bufo.active = true;
+      this.state.bufo.phase = 'stalk';
       this.state.bufo.position = {
         x: this.state.skierPosition.x,
         y: this.state.skierPosition.y - BUFO_BASE_DISTANCE,
@@ -156,26 +165,58 @@ export class SkiGameEngine {
     }
 
     if (!this.state.bufo.active) {
+      this.state.bufo.phase = 'waiting';
       this.state.bufo.position.x = this.state.skierPosition.x;
       this.state.bufo.position.y = this.state.skierPosition.y - BUFO_BASE_DISTANCE;
       this.state.bufo.distanceBehind = BUFO_BASE_DISTANCE;
-      this.state.bufo.speed = this.state.speed + BUFO_SPEED_OFFSET_START;
+      this.state.bufo.speed = this.state.speed + BUFO_STALK_OFFSET_MIN;
       return;
     }
 
-    const speedOffset =
-      BUFO_SPEED_OFFSET_START + (BUFO_SPEED_OFFSET_END - BUFO_SPEED_OFFSET_START) * this.state.difficulty;
+    if (this.state.bufo.distanceBehind <= BUFO_LUNGE_TRIGGER_DISTANCE) {
+      this.state.bufo.phase = 'lunge';
+    } else if (this.state.bufo.distanceBehind <= BUFO_SURGE_TRIGGER_DISTANCE) {
+      this.state.bufo.phase = 'surge';
+    } else {
+      this.state.bufo.phase = 'stalk';
+    }
+
+    let speedOffset = BUFO_STALK_OFFSET_MIN;
+    let weaveScale = 1;
+    let trackRate = BUFO_HORIZONTAL_TRACK_RATE;
+
+    if (this.state.bufo.phase === 'stalk') {
+      speedOffset =
+        BUFO_STALK_OFFSET_MIN + (BUFO_STALK_OFFSET_MAX - BUFO_STALK_OFFSET_MIN) * this.state.difficulty;
+      weaveScale = 1;
+      trackRate = BUFO_HORIZONTAL_TRACK_RATE;
+    } else if (this.state.bufo.phase === 'surge') {
+      speedOffset = BUFO_SURGE_OFFSET + this.state.difficulty * 48;
+      weaveScale = 0.46;
+      trackRate = BUFO_HORIZONTAL_TRACK_RATE * 1.35;
+    } else {
+      speedOffset = BUFO_LUNGE_OFFSET + this.state.difficulty * 62;
+      weaveScale = 0.14;
+      trackRate = BUFO_LUNGE_TRACK_RATE;
+    }
+
+    const weave =
+      Math.sin(this.state.elapsedMs * 0.001 * BUFO_WEAVE_FREQUENCY + this.state.score * 0.0042) *
+      BUFO_WEAVE_AMPLITUDE *
+      weaveScale;
+    const targetX = this.state.skierPosition.x + weave;
+    const trackingBlend = Math.min(1, trackRate * dt);
+    this.state.bufo.position.x += (targetX - this.state.bufo.position.x) * trackingBlend;
+
     this.state.bufo.speed = this.state.speed + speedOffset;
     this.state.bufo.position.y += this.state.bufo.speed * dt;
-
-    const trackingBlend = Math.min(1, BUFO_TRACKING_RATE * dt);
-    this.state.bufo.position.x +=
-      (this.state.skierPosition.x - this.state.bufo.position.x) * trackingBlend;
     this.state.bufo.distanceBehind = this.state.skierPosition.y - this.state.bufo.position.y;
 
+    const catchXRange =
+      this.state.bufo.phase === 'lunge' ? BUFO_CATCH_X_RANGE * 1.3 : BUFO_CATCH_X_RANGE;
     if (
       this.state.bufo.distanceBehind <= BUFO_CATCH_DISTANCE &&
-      Math.abs(this.state.skierPosition.x - this.state.bufo.position.x) <= BUFO_CATCH_X_RANGE
+      Math.abs(this.state.skierPosition.x - this.state.bufo.position.x) <= catchXRange
     ) {
       this.endRun('bufo');
     }

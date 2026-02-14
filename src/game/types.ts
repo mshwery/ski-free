@@ -1,6 +1,7 @@
 export type ObstacleType = 'tree' | 'rock' | 'gateLeft' | 'gateRight';
 
 export type GameOverReason = 'obstacle' | 'bufo' | null;
+export type BufoPhase = 'waiting' | 'stalk' | 'surge' | 'lunge';
 
 export interface Vec2 {
   x: number;
@@ -17,6 +18,7 @@ export interface Obstacle {
 
 export interface BufoState {
   active: boolean;
+  phase: BufoPhase;
   position: Vec2;
   speed: number;
   distanceBehind: number;
