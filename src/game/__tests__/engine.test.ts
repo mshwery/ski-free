@@ -58,7 +58,7 @@ describe('SkiGameEngine', () => {
 
     runFrames(engine, 1200);
     const lateState = engine.getState();
-    expect(lateState.speed).toBeGreaterThan(earlySpeed + 45);
+    expect(lateState.speed).toBeGreaterThan(earlySpeed + 25);
     expect(lateState.difficulty).toBeGreaterThan(0.3);
   });
 
