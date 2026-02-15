@@ -34,6 +34,7 @@ import type { GameOverReason, GameState, Obstacle } from './types';
 const MAX_TIMESTEP_MS = 48;
 const progressFromDistance = (distance: number, rampDistance: number): number =>
   clamp(distance / rampDistance, 0, 1);
+const easeInSpeedRamp = (progress: number): number => Math.pow(progress, 1.65);
 
 export interface SkiGameEngineOptions {
   viewportWidth: number;
@@ -115,7 +116,7 @@ export class SkiGameEngine {
 
     this.state.skierDirection = momentumToDirection(this.state.skierMomentum);
     const speedRamp = progressFromDistance(this.state.score, SPEED_RAMP_DISTANCE);
-    const forwardSpeed = BASE_FORWARD_SPEED + MAX_SPEED_BOOST * speedRamp;
+    const forwardSpeed = BASE_FORWARD_SPEED + MAX_SPEED_BOOST * easeInSpeedRamp(speedRamp);
     const movement = movementFromMomentum(this.state.skierMomentum, forwardSpeed);
 
     this.state.skierPosition.x += movement.vx * dt;

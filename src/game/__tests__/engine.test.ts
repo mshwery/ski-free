@@ -51,15 +51,20 @@ describe('SkiGameEngine', () => {
     expect(state.gameOver).toBe(false);
   });
 
-  it('increases base downhill speed as score rises', () => {
+  it('ramps downhill speed gradually as score rises', () => {
     const engine = new SkiGameEngine({ viewportWidth: 700, seed: 5, disableObstacles: true });
     runFrames(engine, 40);
     const earlySpeed = engine.getState().speed;
 
     runFrames(engine, 1200);
+    const midSpeed = engine.getState().speed;
+    expect(midSpeed).toBeGreaterThan(earlySpeed + 6);
+    expect(midSpeed).toBeLessThan(earlySpeed + 28);
+
+    runFrames(engine, 1800);
     const lateState = engine.getState();
-    expect(lateState.speed).toBeGreaterThan(earlySpeed + 38);
-    expect(lateState.difficulty).toBeGreaterThan(0.3);
+    expect(lateState.speed).toBeGreaterThan(midSpeed + 20);
+    expect(lateState.difficulty).toBeGreaterThan(0.35);
   });
 
   it('activates bufo chase and eventually ends run by capture', () => {
