@@ -27,6 +27,10 @@ npm run dev
 
 Open the local URL printed by Vite.
 
+### Visual gallery
+
+Use `/gallery.html` for a dedicated sprite/state gallery that helps visual QA and regression testing.
+
 ## Scripts
 
 - `npm run dev` — start development server

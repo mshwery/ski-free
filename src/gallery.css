@@ -1,0 +1,144 @@
+:root {
+  font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: linear-gradient(180deg, #dce8ff 0%, #bfd4ff 100%);
+  color: #10213f;
+}
+
+#app {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.gallery-page {
+  width: min(1100px, 100%);
+  display: grid;
+  gap: 16px;
+}
+
+.gallery-header {
+  display: grid;
+  gap: 8px;
+}
+
+.gallery-header h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+}
+
+.gallery-header p {
+  margin: 0;
+  color: #2a4672;
+}
+
+.gallery-nav-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.gallery-link,
+.gallery-refresh {
+  border-radius: 999px;
+  border: 0;
+  padding: 8px 14px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.gallery-link {
+  background: #1d4ed8;
+  color: #fff;
+}
+
+.gallery-refresh {
+  background: #fff;
+  color: #1d4ed8;
+  cursor: pointer;
+}
+
+.gallery-sections {
+  display: grid;
+  gap: 14px;
+}
+
+.gallery-section {
+  border-radius: 14px;
+  border: 2px solid #1f2d47;
+  background: rgb(248 251 255 / 85%);
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.gallery-section h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.gallery-section p {
+  margin: 0;
+  color: #304a76;
+}
+
+.state-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.state-card {
+  border-radius: 12px;
+  border: 1px solid #bfd2f6;
+  background: #fff;
+  padding: 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.state-card h3 {
+  margin: 0;
+  font-size: 0.96rem;
+}
+
+.state-card p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #4a5f84;
+}
+
+.state-preview {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid #d5e2fb;
+  image-rendering: pixelated;
+}
+
+.gallery-checklist {
+  border-radius: 14px;
+  border: 2px solid #1f2d47;
+  background: rgb(248 251 255 / 85%);
+  padding: 14px;
+}
+
+.gallery-checklist h2 {
+  margin: 0 0 8px;
+}
+
+.gallery-checklist ul {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 6px;
+}

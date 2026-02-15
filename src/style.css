@@ -40,6 +40,27 @@ body {
   letter-spacing: 0.01em;
 }
 
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.gallery-link {
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: #1d4ed8;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.gallery-link:hover {
+  background: #285be0;
+}
+
 .subtitle {
   margin: 0;
   color: #2f4b76;

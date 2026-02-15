@@ -53,6 +53,15 @@ const title = document.createElement('h1');
 title.className = 'title';
 title.textContent = 'SkiFree Modern Clone';
 
+const titleRow = document.createElement('div');
+titleRow.className = 'title-row';
+
+const galleryLink = document.createElement('a');
+galleryLink.className = 'gallery-link';
+galleryLink.href = '/gallery.html';
+galleryLink.textContent = 'Visual gallery';
+titleRow.append(title, galleryLink);
+
 const subtitle = document.createElement('p');
 subtitle.className = 'subtitle';
 subtitle.textContent = 'Classic downhill chaos rebuilt for modern browsers and touch screens.';
@@ -117,7 +126,7 @@ help.textContent =
   'Desktop: Arrow keys / A-D. Touch: drag or buttons. At distance, bufo stalks then lunges.';
 
 gameShell.append(canvas, hud, bufoAlert, gameOver, touchControls);
-page.append(title, subtitle, gameShell, help);
+page.append(titleRow, subtitle, gameShell, help);
 app.appendChild(page);
 
 const bestScore = readBestScore();
