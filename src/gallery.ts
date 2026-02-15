@@ -54,7 +54,7 @@ page.appendChild(sectionsHost);
 
 const cardsToDraw: Array<() => void> = [];
 
-const createCard = (state: VisualState): HTMLArticleElement => {
+const createCard = (state: VisualState): HTMLElement => {
   const card = document.createElement('article');
   card.className = 'state-card';
 
