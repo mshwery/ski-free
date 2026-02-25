@@ -16,6 +16,11 @@ A modern browser remake of the classic SkiFree style game, built with TypeScript
 - CI on GitHub Actions for lint, tests, and production build.
 - Optional GitHub Pages deploy workflow.
 
+## Requirements
+
+- Node.js (current LTS recommended)
+- npm
+
 ## Quick start
 
 ```bash
