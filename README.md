@@ -34,6 +34,8 @@ Open the local URL printed by Vite.
 
 - `npm run dev` — start development server
 - `npm run lint` — run ESLint
+- `npm run format` — check formatting with Prettier
+- `npm run format:fix` — apply Prettier formatting fixes
 - `npm run test` — run Vitest in CI mode
 - `npm run test:watch` — run Vitest in watch mode
 - `npm run build` — type-check + production build
