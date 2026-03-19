@@ -1,3 +1,4 @@
 .cursor/nal-traces/*
+.cursor/nal-trace/*
 dist/**
 node_modules/**
