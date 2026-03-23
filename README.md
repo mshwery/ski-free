@@ -1,1 +1,13 @@
-Current Date and Time (UTC - YYYY-MM-DD HH:MM:SS formatted): 2026-02-14 04:36:54
+# ski-free
+
+Work in progress.
+
+## Setup
+
+When a `package.json` is added:
+
+```bash
+npm install
+```
+
+Build output and dependencies are ignored via `.gitignore` (`dist/`, `node_modules/`).
